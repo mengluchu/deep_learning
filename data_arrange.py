@@ -9,7 +9,6 @@ Created on Tue Mar 17 12:25:25 2020
 import os
 import gdal 
 import numpy as np
-import matplotlib.pyplot as plt
 
  
 import pandas as pd
@@ -42,25 +41,12 @@ for i in range(1,2634):
    # plt.imshow(arr)
    # plt.show()
    # print(arr.shape)
-np.save('/Users/menglu/Documents/deep_learning/road4', result)
-np.save('/Users/menglu/Documents/deep_learning/road2', result)
-np.save('/Users/menglu/Documents/deep_learning/road3', result)
+np.save('/Users/menglu/Documents/Github/deep_learning/predictors/road4', result)
+np.save('/Users/menglu/Documents/Github/deep_learning/predictors/road2', result)
+np.save('/Users/menglu/Documents/Github/deep_learning/predictors/road3', result)
 #599,2225,2478,2504
 # till 2634
 
-road4 = np.load('/Users/menglu/Documents/deep_learning/road4.npy')
-road3 = np.load('/Users/menglu/Documents/deep_learning/road3.npy')
-road2 = np.load('/Users/menglu/Documents/deep_learning/road2.npy')
 
-road234=np.array((road2,road3, road4))
-road234.shape 
 
-plt.imshow(road2[:,:,1])
-plt.show() 
 
-ap = pd.read_csv('airbase_oaq.csv')
-ap.shape[0]-2634
-ap = ap[:-3042]
-ap = ap.drop(mal)
-ap.shape
- 

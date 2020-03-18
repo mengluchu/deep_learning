@@ -11,8 +11,10 @@ from keras.preprocessing.image import ImageDataGenerator
 from keras.models import Sequential
 from keras.layers import Dense, Dropout, Activation, Flatten
 from keras.layers import Conv2D, MaxPooling2D, AveragePooling2D
+import matplotlib.pyplot as plt
 
 from pandas import read_csv
+import numpy as np
 
 from keras.wrappers.scikit_learn import KerasRegressor
 from sklearn.model_selection import cross_val_score
@@ -21,16 +23,21 @@ from sklearn.preprocessing import StandardScaler
 from sklearn.pipeline import Pipeline
 from keras import backend as K
 
-road4 = np.load('/Users/menglu/Documents/deep_learning/road4.npy')
-road3 = np.load('/Users/menglu/Documents/deep_learning/road3.npy')
-road2 = np.load('/Users/menglu/Documents/deep_learning/road2.npy')
-road5 = np.load('/Users/menglu/Documents/deep_learning/road5.npy')
-road1 = np.load('/Users/menglu/Documents/deep_learning/road1.npy')
+road4 = np.load('/Users/menglu/Documents/Github/deep_learning/predictors/road4.npy')
+road3 = np.load('/Users/menglu/Documents/Github/deep_learning/predictors/road3.npy')
+road2 = np.load('/Users/menglu/Documents/Github/deep_learning/predictors/road2.npy')
+road5 = np.load('/Users/menglu/Documents/Github/deep_learning/predictors/road5.npy')
+road1 = np.load('/Users/menglu/Documents/Github/deep_learning/predictors/road1.npy')
 
 road234=np.array(( road2,road3, road4, road5))
 road234.shape
+ 
+plt.imshow(road2[:,:,1])
+plt.show() 
 
-ap = read_csv('airbase_oaq.csv')
+
+mal = [599,2225,2478,2504] # id of removed rasters
+ap = read_csv('/Users/menglu/Documents/Github/deep_learning/airbase_oaq.csv')
 ap.shape[0]-2634
 ap = ap[:-3042]
 ap = ap.drop(mal)
