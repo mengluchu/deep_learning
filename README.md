@@ -1,9 +1,10 @@
-# Study of deep learning in air pollution
+# Etude: deep learning in air pollution
 
 Exploration of air pollution mapping and others. The very initial motivation is to learn the road-no2 relationships automatically than using buffers
 
 * data_arrange.py: gather data, the original data are pcrastermaps of roads in 25 m buffer at coordinates of ground stations
-* cnnap: explore a  simple deep cnn structure with augumentation, different batchsize, structure, activation, pooling strateg.
+* cnnap.py: explore a  simple deep cnn structure with augumentation, different batchsize, structure, activation, pooling strategies.
+* airbase_oaq.csv: ground stations for global air pollution mapping, currently not including Australia. 
 
 #### current findings 
 
