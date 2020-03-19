@@ -53,7 +53,7 @@ Y = ap['value_mean']
 
 road234r = np.moveaxis(road234, 3, 0)
 road234r = np.moveaxis(road234r, 1, -1) # channel last: ! be super careful about what array reshape mean, it is not the same as movng axis!!
-  #road234r, Y = shuffle(road234r, Y)
+road234r, Y = shuffle(road234r, Y)
  
 Xtrainv =road234r[1:2300,:,:,:] # 2300 for training and validation, consisting of trainging and validation
 Xtest =road234r[2300:,:,:,:]  #330 for testing, not going to touch
