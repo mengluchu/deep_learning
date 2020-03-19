@@ -187,7 +187,7 @@ else:
     plt.xlabel('epoch')
     plt.legend(['train', 'validation'], loc='upper left')
 # save before show(), otherwise wont work
-    plt.savefig("/Users/menglu/Documents/deep_learning/apcnn50poc_mae.png")
+    plt.savefig("/Users/menglu/Documents/Github/deep_learnings/apcnn50poc_mae.png")
     plt.show()
 
 #Xnew = np.array([[40, 0, 26, 9000, 8000]])
