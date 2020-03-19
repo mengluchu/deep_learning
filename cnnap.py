@@ -50,15 +50,16 @@ Xtest =road234[:,:,:,2001:]
 Ytrain = Y[1:2000]
 Ytest = Y[2001:]
 
-if K.image_data_format() == 'channels_first':
-    Xtrain =Xtrain.reshape(Xtrain.shape[3], Xtrain.shape[0], Xtrain.shape[1], Xtrain.shape[2])
-    Xtest = Xtest.reshape(Xtest.shape[3], Xtest.shape[0], Xtest.shape[1], Xtest.shape[2])
-    input_shape = (4, 32, 32)
-else:
-    Xtrain =Xtrain.reshape(Xtrain.shape[3], Xtrain.shape[1], Xtrain.shape[2], Xtrain.shape[0])
-    Xtest = Xtest.reshape(Xtest.shape[3], Xtest.shape[1], Xtest.shape[2], Xtest.shape[0])
+ 
+Xtrain = np.moveaxis(Xtrain, 3, 0)
+Xtrain = np.moveaxis(Xtrain, 1, -1) # channel last: ! be super careful about what array reshape mean, it is not the same as movng axis!!
 
-    input_shape = (32, 32, 4) 
+Xtest = np.moveaxis(Xtest, 3, 0)
+Xtest = np.moveaxis(Xtest, 1, -1) # channel last: ! be super careful about what array reshape mean, it is not the same as movng axis!!
+
+ 
+
+input_shape = (32, 32, 4) 
 
 
  

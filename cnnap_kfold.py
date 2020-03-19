@@ -11,6 +11,7 @@ from keras.preprocessing.image import ImageDataGenerator
 from keras.models import Sequential
 from keras.layers import Dense, Dropout, Activation, Flatten
 from keras.layers import Conv2D, MaxPooling2D, AveragePooling2D
+from sklearn.utils import shuffle
 import matplotlib.pyplot as plt
 
 from pandas import read_csv
@@ -30,9 +31,11 @@ road5 = np.load('/Users/menglu/Documents/Github/deep_learning/predictors/road5.n
 road1 = np.load('/Users/menglu/Documents/Github/deep_learning/predictors/road1.npy')
 
 road234=np.array(( road2,road3, road4, road5))
-road234.shape
+road234r.shape
  
-plt.imshow(road2[:,:,1])
+plt.imshow(road234r[1,:,:,3])
+plt.show() 
+plt.imshow(road234[3,:,:,1])
 plt.show() 
 
 
@@ -43,18 +46,21 @@ ap = ap[:-3042]
 ap = ap.drop(mal)
 ap.shape
 ap.dropna # no na same as ap
+ap['country'].unique()
+
 Y = ap['value_mean']
 
-data_augmentation = True
 
-
-Xtrainv =road234[:,:,:,1:2300] # 2300 for training and validation, consisting of trainging and validation
-Xtest =road234[:,:,:,2300:]  #330 for testing, not going to touch
+road234r = np.moveaxis(road234, 3, 0)
+road234r = np.moveaxis(road234r, 1, -1) # channel last: ! be super careful about what array reshape mean, it is not the same as movng axis!!
+  #road234r, Y = shuffle(road234r, Y)
+ 
+Xtrainv =road234r[1:2300,:,:,:] # 2300 for training and validation, consisting of trainging and validation
+Xtest =road234r[2300:,:,:,:]  #330 for testing, not going to touch
 Ytrainv = Y[1:2300]
 Ytest = Y[2300:]
 
-
-
+ 
 
 # define
 # kernal initializer is important!
@@ -92,30 +98,18 @@ def cnn_model():
 # data augumentation assumes the inputs are images, with 1, 3, or 4 channels: grayscale, rgb, 
 # the first dimension is always the number of samples. 
 
-k  = 4  # 4fold
-num_validation_samples = Xtrainv.shape[3]//k
+k  = 5 # 4fold
+num_validation_samples = Xtrainv.shape[0]//k
 validation_scores = []
 for fold in range (k):
-    validation_X= Xtrainv[:,:,:, num_validation_samples*fold : num_validation_samples*(fold+1)]
-    training_X = np.concatenate((Xtrainv[:,:,:,:num_validation_samples*fold] , Xtrainv[:,:,:,num_validation_samples*(fold+1):]),axis =3)
+    validation_X= Xtrainv[num_validation_samples*fold : num_validation_samples*(fold+1),:,:,:]
+    training_X = np.concatenate((Xtrainv[:num_validation_samples*fold,:,:,:] , Xtrainv[num_validation_samples*(fold+1):,:,:,:]),axis =0)
     validation_Y= Ytrainv[num_validation_samples*fold : num_validation_samples*(fold+1)]
     training_Y = np.concatenate((Ytrainv[:num_validation_samples*fold], Ytrainv[num_validation_samples*(fold+1):]),axis=None) 
 
-    if K.image_data_format() == 'channels_first':
-        input_shape = (training_X.shape[0], training_X.shape[1], training_X.shape[2])
-        validation_X2 = validation_X.reshape(validation_X.shape[3], validation_X.shape[0], validation_X.shape[1], validation_X.shape[2])
-        training_X2 =training_X.reshape(training_X.shape[3], training_X.shape[0], training_X.shape[1], training_X.shape[2])
-        Xtest2 = Xtest.reshape(Xtest.shape[3], Xtest.shape[0], Xtest.shape[1], Xtest.shape[2])
     
-    
-    else:
-        input_shape = (training_X.shape[1], training_X.shape[2], training_X.shape[0]) 
-        validation_X2 =validation_X.reshape(validation_X.shape[3], validation_X.shape[1], validation_X.shape[2], validation_X.shape[0])
-        training_X2 =training_X.reshape(training_X.shape[3], training_X.shape[1], training_X.shape[2], training_X.shape[0])
-    
-        Xtest2 = Xtest.reshape(Xtest.shape[3], Xtest.shape[1], Xtest.shape[2], Xtest.shape[0])
-
-
+    input_shape = (training_X.shape[1], training_X.shape[2], training_X.shape[3]) 
+        
     m = cnn_model() 
     #print(cnn_model().summary())
     m.compile(loss='mae',
@@ -124,17 +118,17 @@ for fold in range (k):
 
     
  
-    history = m.fit(training_X2, training_Y,
-          batch_size= 100,
+    history = m.fit(training_X, training_Y,
+          batch_size= 50,
           epochs= 5,
           verbose=1,
-          validation_data=(validation_X2, validation_Y))
+          validation_data=(validation_X, validation_Y))
     validation_score =history.history['val_mae']
     validation_scores.append(validation_score)
 
 validation_score =np.average(validation_scores)
-testscore = m.evaluate(Xtest2, Ytest, verbose=0)
-print('val-:',validation_score, 'test:', testscore)
+testscore = m.evaluate(Xtest, Ytest, verbose=0)
+print('val-:',validation_score, 'test:', testscore[0])
   
      
 # "Loss"
