@@ -97,57 +97,45 @@ num_validation_samples = Xtrainv.shape[3]//k
 validation_scores = []
 for fold in range (k):
     validation_X= Xtrainv[:,:,:, num_validation_samples*fold : num_validation_samples*(fold+1)]
-    training_X = Xtrainv[:,:,:,:num_validation_samples*fold] + Xtrainv[:,:,:,num_validation_samples*(fold+1):]
+    training_X = np.concatenate((Xtrainv[:,:,:,:num_validation_samples*fold] , Xtrainv[:,:,:,num_validation_samples*(fold+1):]),axis =3)
     validation_Y= Ytrainv[num_validation_samples*fold : num_validation_samples*(fold+1)]
-    training_Y = Ytrainv[:num_validation_samples*fold] + Xtrainv[num_validation_samples*(fold+1):] 
+    training_Y = np.concatenate((Ytrainv[:num_validation_samples*fold], Ytrainv[num_validation_samples*(fold+1):]),axis=None) 
 
     if K.image_data_format() == 'channels_first':
         input_shape = (training_X.shape[0], training_X.shape[1], training_X.shape[2])
-        validation_X = validation_X.reshape(validation_X.shape[3], validation_X.shape[0], validation_X.shape[1], validation_X.shape[2])
-        training_X =training_X.reshape(training_X.shape[3], training_X.shape[0], training_X.shape[1], training_X.shape[2])
-        Xtest = Xtest.reshape(Xtest.shape[3], Xtest.shape[0], Xtest.shape[1], Xtest.shape[2])
+        validation_X2 = validation_X.reshape(validation_X.shape[3], validation_X.shape[0], validation_X.shape[1], validation_X.shape[2])
+        training_X2 =training_X.reshape(training_X.shape[3], training_X.shape[0], training_X.shape[1], training_X.shape[2])
+        Xtest2 = Xtest.reshape(Xtest.shape[3], Xtest.shape[0], Xtest.shape[1], Xtest.shape[2])
     
     
     else:
         input_shape = (training_X.shape[1], training_X.shape[2], training_X.shape[0]) 
-        validation_X =validation_X.reshape(validation_X.shape[3], validation_X.shape[1], validation_X.shape[2], validation_X.shape[0])
-        training_X =training_X.reshape(training_X.shape[3], training_X.shape[1], training_X.shape[2], training_X.shape[0])
+        validation_X2 =validation_X.reshape(validation_X.shape[3], validation_X.shape[1], validation_X.shape[2], validation_X.shape[0])
+        training_X2 =training_X.reshape(training_X.shape[3], training_X.shape[1], training_X.shape[2], training_X.shape[0])
     
-        Xtest = Xtest.reshape(Xtest.shape[3], Xtest.shape[1], Xtest.shape[2], Xtest.shape[0])
+        Xtest2 = Xtest.reshape(Xtest.shape[3], Xtest.shape[1], Xtest.shape[2], Xtest.shape[0])
 
-    
-    
-
- 
 
     m = cnn_model() 
-    print(cnn_model().summary())
+    #print(cnn_model().summary())
     m.compile(loss='mae',
               optimizer='adam',
               metrics=['mse', 'mae'])
 
     
  
-    history = m.fit(training_X, training_Y,
+    history = m.fit(training_X2, training_Y,
           batch_size= 100,
           epochs= 5,
           verbose=1,
-          validation_data=(validation_X, validation_Y))
-    validation_score =history['mae']
+          validation_data=(validation_X2, validation_Y))
+    validation_score =history.history['val_mae']
     validation_scores.append(validation_score)
-    validation_score =np.average(validation_scores)
-    testscore = m.evaluate(Xtest, Ytest, verbose=0)
-    print('val-:',validation_score, 'test:', testscore)
+
+validation_score =np.average(validation_scores)
+testscore = m.evaluate(Xtest2, Ytest, verbose=0)
+print('val-:',validation_score, 'test:', testscore)
   
-    print(history.history.keys())
+     
 # "Loss"
-    plt.plot(history.history['mae'])
-    plt.plot(history.history['val_mae'])
-    plt.title('model mae')
-    plt.ylabel('mae')
-    plt.xlabel('epoch')
-    plt.legend(['train', 'validation'], loc='upper left')
-# save before show(), otherwise wont work
-#    plt.savefig("/Users/menglu/Documents/deep_learning/apcnn50poc_mae.png")
-    plt.show()
- 
+   
