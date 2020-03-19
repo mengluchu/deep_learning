@@ -98,7 +98,7 @@ def cnn_model():
 # data augumentation assumes the inputs are images, with 1, 3, or 4 channels: grayscale, rgb, 
 # the first dimension is always the number of samples. 
 
-k  = 5 # 4fold
+k  = 5 # fold
 num_validation_samples = Xtrainv.shape[0]//k
 validation_scores = []
 for fold in range (k):
@@ -120,7 +120,7 @@ for fold in range (k):
  
     history = m.fit(training_X, training_Y,
           batch_size= 50,
-          epochs= 5,
+          epochs= 15,
           verbose=1,
           validation_data=(validation_X, validation_Y))
     validation_score =history.history['val_mae']
